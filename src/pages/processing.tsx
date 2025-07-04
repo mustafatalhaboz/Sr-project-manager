@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
-import { RequestData, Project } from '@/lib/types';
-import { getProjectById } from '@/lib/projects';
-import ProcessingView from '@/components/ui/ProcessingView';
-import StepIndicator from '@/components/ui/StepIndicator';
+import { RequestData, Project } from '../lib/types';
+import { getProjectById } from '../lib/projects';
+import ProcessingView from '../components/ui/ProcessingView';
+import StepIndicator from '../components/ui/StepIndicator';
 
 export default function Processing() {
   const router = useRouter();
