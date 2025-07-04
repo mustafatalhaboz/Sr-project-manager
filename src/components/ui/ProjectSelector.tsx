@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Folder } from 'lucide-react';
-import { Project } from '@/lib/types';
+import { Project } from '../../lib/types';
 
 interface ProjectSelectorProps {
   projects: Project[];
