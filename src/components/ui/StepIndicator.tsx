@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircle, Circle, ArrowRight } from 'lucide-react';
-import { WorkflowStep } from '@/lib/types';
+import { WorkflowStep } from '../../lib/types';
 
 interface StepIndicatorProps {
   currentStep: WorkflowStep;
