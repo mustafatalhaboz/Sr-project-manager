@@ -7,8 +7,6 @@ import {
   ExternalLink, 
   Clock, 
   Tag, 
-  User,
-  Calendar,
   AlertCircle,
   RefreshCw
 } from 'lucide-react';
@@ -97,7 +95,7 @@ const ValidationView: React.FC<ValidationViewProps> = ({ data, className = '' })
             Task Başarıyla Oluşturuldu!
           </h2>
           <p className="text-gray-600 mb-6">
-            ClickUp'ta yeni task oluşturuldu ve ekibinize atandı.
+            ClickUp&apos;ta yeni task oluşturuldu ve ekibinize atandı.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -108,7 +106,7 @@ const ValidationView: React.FC<ValidationViewProps> = ({ data, className = '' })
               className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
-              ClickUp'ta Görüntüle
+              ClickUp&apos;ta Görüntüle
             </a>
             <button
               onClick={handleBack}
