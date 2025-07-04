@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Send, AlertCircle, FileText, Tag, Clock } from 'lucide-react';
-import { Project, RequestData } from '@/lib/types';
+import { Project, RequestData } from '../../lib/types';
 import ProjectSelector from './ProjectSelector';
-import { getProjects } from '@/lib/projects';
+import { getProjects } from '../../lib/projects';
 
 interface RequestFormProps {
   className?: string;
