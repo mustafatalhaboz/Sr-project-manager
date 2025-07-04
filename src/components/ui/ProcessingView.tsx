@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Brain, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
-import { RequestData, Project, ProcessingState } from '@/lib/types';
-import { analyzeRequest } from '@/lib/openai';
+import { RequestData, Project, ProcessingState } from '../../lib/types';
+import { analyzeRequest } from '../../lib/openai';
 
 interface ProcessingViewProps {
   requestData: RequestData;
