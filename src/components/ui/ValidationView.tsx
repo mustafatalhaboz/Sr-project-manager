@@ -10,9 +10,9 @@ import {
   AlertCircle,
   RefreshCw
 } from 'lucide-react';
-import { ValidationData, AIAnalysisResult } from '@/lib/types';
-import { createTask } from '@/lib/clickup';
-import { refineAnalysis } from '@/lib/openai';
+import { ValidationData, AIAnalysisResult } from '../../lib/types';
+import { createTask } from '../../lib/clickup';
+import { refineAnalysis } from '../../lib/openai';
 
 interface ValidationViewProps {
   data: ValidationData;
