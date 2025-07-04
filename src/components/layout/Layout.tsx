@@ -1,19 +1,16 @@
 import React from 'react';
 import Head from 'next/head';
-import { WorkflowStep } from '@/lib/types';
 
 interface LayoutProps {
   children: React.ReactNode;
   title?: string;
   description?: string;
-  currentStep?: WorkflowStep;
 }
 
 const Layout: React.FC<LayoutProps> = ({ 
   children, 
   title = 'Müşteri Talep Yönetim Sistemi',
-  description = 'AI destekli müşteri talep analizi ve proje yönetimi',
-  currentStep
+  description = 'AI destekli müşteri talep analizi ve proje yönetimi'
 }) => {
   return (
     <>
