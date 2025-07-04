@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
-import { ValidationData } from '@/lib/types';
-import ValidationView from '@/components/ui/ValidationView';
-import StepIndicator from '@/components/ui/StepIndicator';
+import { ValidationData } from '../lib/types';
+import ValidationView from '../components/ui/ValidationView';
+import StepIndicator from '../components/ui/StepIndicator';
 
 export default function Validation() {
   const router = useRouter();
