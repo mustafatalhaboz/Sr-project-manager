@@ -118,7 +118,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ className = '' }) => {
             onChange={(e) => setRequestText(e.target.value)}
             placeholder="Talebinizi detaylı olarak açıklayın..."
             rows={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
             disabled={isSubmitting}
           />
           <div className="mt-1 text-sm text-gray-500">
@@ -135,7 +135,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ className = '' }) => {
             <select
               value={type}
               onChange={(e) => setType(e.target.value as any)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
               disabled={isSubmitting}
             >
               <option value="feature">Yeni Özellik</option>
@@ -161,7 +161,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ className = '' }) => {
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value as any)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
               disabled={isSubmitting}
             >
               <option value="low">Düşük</option>

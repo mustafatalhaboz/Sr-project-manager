@@ -177,7 +177,7 @@ const ValidationView: React.FC<ValidationViewProps> = ({ data, className = '' })
               onChange={(e) => setFeedback(e.target.value)}
               placeholder="Analizi nasıl düzenlenmesini istiyorsunuz?"
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
             />
             <button
               onClick={handleRefine}

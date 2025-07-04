@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Folder } from 'lucide-react';
 import { Project } from '@/lib/types';
 
@@ -15,7 +15,22 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
   onProjectSelect,
   className = ''
 }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Click outside to close
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleProjectClick = (project: Project) => {
     onProjectSelect(project);
@@ -23,7 +38,7 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
   };
 
   return (
-    <div className={`relative ${className}`}>
+    <div ref={dropdownRef} className={`relative ${className}`}>
       <label className="block text-sm font-medium text-gray-700 mb-2">
         Proje Seçin
       </label>
@@ -39,12 +54,12 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
             {selectedProject ? (
               <div>
                 <span className="font-medium text-gray-900">{selectedProject.name}</span>
-                <span className="text-gray-500 text-sm ml-2">
+                <span className="text-gray-600 text-sm ml-2">
                   ({selectedProject.techStack.join(', ')})
                 </span>
               </div>
             ) : (
-              <span className="text-gray-500">Bir proje seçin...</span>
+              <span className="text-gray-600">Bir proje seçin...</span>
             )}
           </div>
           <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
