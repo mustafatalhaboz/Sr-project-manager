@@ -148,12 +148,12 @@ const ValidationView: React.FC<ValidationViewProps> = ({ data, className = '' })
             <h3 className="font-semibold text-gray-900 mb-3">Orijinal Talep</h3>
             <div className="space-y-2">
               <div>
-                <span className="text-sm text-gray-500">Proje:</span>
-                <p className="font-medium">{data.project.name}</p>
+                <span className="text-sm text-gray-600">Proje:</span>
+                <p className="font-medium text-gray-900">{data.project.name}</p>
               </div>
               <div>
-                <span className="text-sm text-gray-500">Talep:</span>
-                <p className="text-sm">{data.request.text}</p>
+                <span className="text-sm text-gray-600">Talep:</span>
+                <p className="text-sm text-gray-800">{data.request.text}</p>
               </div>
               <div className="flex gap-2">
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(data.request.priority)}`}>
@@ -210,23 +210,23 @@ const ValidationView: React.FC<ValidationViewProps> = ({ data, className = '' })
             
             <div className="space-y-3">
               <div>
-                <span className="text-sm text-gray-500">Başlık:</span>
-                <p className="font-medium">{currentAnalysis.title}</p>
+                <span className="text-sm text-gray-600">Başlık:</span>
+                <p className="font-medium text-gray-900">{currentAnalysis.title}</p>
               </div>
               
               <div>
-                <span className="text-sm text-gray-500">Açıklama:</span>
-                <p className="text-sm">{currentAnalysis.description}</p>
+                <span className="text-sm text-gray-600">Açıklama:</span>
+                <p className="text-sm text-gray-800">{currentAnalysis.description}</p>
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-sm text-gray-500">Kategori:</span>
-                  <p className="font-medium">{currentAnalysis.category}</p>
+                  <span className="text-sm text-gray-600">Kategori:</span>
+                  <p className="font-medium text-gray-900">{currentAnalysis.category}</p>
                 </div>
                 <div>
-                  <span className="text-sm text-gray-500">Tahmini Süre:</span>
-                  <p className="font-medium">{currentAnalysis.estimatedTime}</p>
+                  <span className="text-sm text-gray-600">Tahmini Süre:</span>
+                  <p className="font-medium text-gray-900">{currentAnalysis.estimatedTime}</p>
                 </div>
               </div>
               
@@ -238,10 +238,10 @@ const ValidationView: React.FC<ValidationViewProps> = ({ data, className = '' })
               </div>
               
               <div>
-                <span className="text-sm text-gray-500">Teknik Gereksinimler:</span>
+                <span className="text-sm text-gray-600">Teknik Gereksinimler:</span>
                 <ul className="text-sm mt-1 space-y-1">
                   {currentAnalysis.technicalRequirements.map((req, index) => (
-                    <li key={index} className="flex items-start">
+                    <li key={index} className="flex items-start text-gray-800">
                       <span className="text-blue-500 mr-2">•</span>
                       {req}
                     </li>
@@ -250,10 +250,10 @@ const ValidationView: React.FC<ValidationViewProps> = ({ data, className = '' })
               </div>
               
               <div>
-                <span className="text-sm text-gray-500">Kabul Kriterleri:</span>
+                <span className="text-sm text-gray-600">Kabul Kriterleri:</span>
                 <ul className="text-sm mt-1 space-y-1">
                   {currentAnalysis.acceptanceCriteria.map((criteria, index) => (
-                    <li key={index} className="flex items-start">
+                    <li key={index} className="flex items-start text-gray-800">
                       <span className="text-green-500 mr-2">✓</span>
                       {criteria}
                     </li>
@@ -262,7 +262,7 @@ const ValidationView: React.FC<ValidationViewProps> = ({ data, className = '' })
               </div>
               
               <div>
-                <span className="text-sm text-gray-500">Etiketler:</span>
+                <span className="text-sm text-gray-600">Etiketler:</span>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {currentAnalysis.tags.map((tag, index) => (
                     <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
