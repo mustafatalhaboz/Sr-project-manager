@@ -19,6 +19,18 @@ const priorityMap = {
   'urgent': 1
 };
 
+// ClickUp API response interface
+interface ClickUpTaskResponse {
+  id: string;
+  name: string;
+  description: string;
+  priority: number;
+  status: {
+    status: string;
+  };
+  url: string;
+}
+
 export async function createTask(
   analysis: AIAnalysisResult,
   project: Project
@@ -26,7 +38,7 @@ export async function createTask(
   try {
     const taskData = {
       name: analysis.title,
-      description: `${analysis.description}\n\n**Teknik Gereksinimler:**\n${analysis.technicalRequirements.map(req => `- ${req}`).join('\n')}\n\n**Kabul Kriterleri:**\n${analysis.acceptanceCriteria.map(criteria => `- ${criteria}`).join('\n')}`,
+      description: `${analysis.description}\\n\\n**Teknik Gereksinimler:**\\n${analysis.technicalRequirements.map(req => `- ${req}`).join('\\n')}\\n\\n**Kabul Kriterleri:**\\n${analysis.acceptanceCriteria.map(criteria => `- ${criteria}`).join('\\n')}`,
       priority: priorityMap[analysis.priority],
       status: 'to do',
       tags: analysis.tags,
@@ -62,7 +74,7 @@ export async function updateTask(
   try {
     const updateData = {
       name: analysis.title,
-      description: `${analysis.description}\n\n**Teknik Gereksinimler:**\n${analysis.technicalRequirements.map(req => `- ${req}`).join('\n')}\n\n**Kabul Kriterleri:**\n${analysis.acceptanceCriteria.map(criteria => `- ${criteria}`).join('\n')}`,
+      description: `${analysis.description}\\n\\n**Teknik Gereksinimler:**\\n${analysis.technicalRequirements.map(req => `- ${req}`).join('\\n')}\\n\\n**Kabul Kriterleri:**\\n${analysis.acceptanceCriteria.map(criteria => `- ${criteria}`).join('\\n')}`,
       priority: priorityMap[analysis.priority],
       tags: analysis.tags,
       time_estimate: convertTimeToMilliseconds(analysis.estimatedTime),
@@ -91,7 +103,7 @@ export async function getTasksByList(listId: string): Promise<ClickUpTask[]> {
     const response = await clickUpClient.get(`/list/${listId}/task`);
     const tasks = response.data.tasks;
     
-    return tasks.map((task: any) => ({
+    return tasks.map((task: ClickUpTaskResponse) => ({
       id: task.id,
       name: task.name,
       description: task.description,
@@ -107,7 +119,7 @@ export async function getTasksByList(listId: string): Promise<ClickUpTask[]> {
 
 function convertTimeToMilliseconds(timeString: string): number {
   // "1-2 gün" formatını milisaniyeye çevir
-  const match = timeString.match(/(\d+)-?(\d+)?\s*(gün|saat|hafta)/i);
+  const match = timeString.match(/(\\d+)-?(\\d+)?\\s*(gün|saat|hafta)/i);
   if (!match) return 0;
   
   const [, min, max, unit] = match;
