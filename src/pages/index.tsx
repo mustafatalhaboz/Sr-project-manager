@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
-import RequestForm from '@/components/ui/RequestForm';
-import StepIndicator from '@/components/ui/StepIndicator';
+import RequestForm from '../components/ui/RequestForm';
+import StepIndicator from '../components/ui/StepIndicator';
 
 export default function Home() {
   return (
