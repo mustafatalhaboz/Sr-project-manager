@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Brain, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
-import { RequestData, AIAnalysisResult, Project, ProcessingState } from '@/lib/types';
+import { RequestData, Project, ProcessingState } from '@/lib/types';
 import { analyzeRequest } from '@/lib/openai';
-import { getProjectById } from '@/lib/projects';
 
 interface ProcessingViewProps {
   requestData: RequestData;
@@ -97,7 +96,7 @@ const ProcessingView: React.FC<ProcessingViewProps> = ({
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [requestData, project, router]);
+  }, [requestData, project, router, processingSteps]);
 
   const handleBack = () => {
     router.push('/');
@@ -162,10 +161,9 @@ const ProcessingView: React.FC<ProcessingViewProps> = ({
 
         {/* Processing Steps */}
         <div className="space-y-4 mb-8">
-          {processingSteps.map((step, index) => {
+          {processingSteps.map((step) => {
             const isCurrentStep = step.id === processingState.currentStep;
             const isCompleted = step.id < processingState.currentStep || isComplete;
-            const isUpcoming = step.id > processingState.currentStep;
 
             return (
               <div
