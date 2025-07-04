@@ -57,7 +57,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ className = '' }) => {
           projectId: selectedProject.id
         }
       });
-    } catch (err) {
+    } catch {
       setError('Bir hata oluştu. Lütfen tekrar deneyin.');
       setIsSubmitting(false);
     }
@@ -134,7 +134,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ className = '' }) => {
             </label>
             <select
               value={type}
-              onChange={(e) => setType(e.target.value as any)}
+              onChange={(e) => setType(e.target.value as 'bug' | 'feature' | 'improvement' | 'question')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
               disabled={isSubmitting}
             >
@@ -160,7 +160,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ className = '' }) => {
             </label>
             <select
               value={priority}
-              onChange={(e) => setPriority(e.target.value as any)}
+              onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high' | 'urgent')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
               disabled={isSubmitting}
             >
