@@ -2,15 +2,15 @@
 
 ## ✅ ÇÖZÜLMÜş SORUNLAR
 
-### 1. **Ana Build Hatası - Path Mapping** ✅ DÜZELTILDI
-- **Sorun**: `tsconfig.json`'da `@/` path mapping tanımlı değildi
-- **Çözüm**: `tsconfig.json`'a `baseUrl` ve `paths` eklendi
-- **Sonuç**: `@/styles/globals.css` ve `@/components/...` import'ları artık çalışıyor
+### 1. **Ana Build Hatası - Path Mapping** ✅ DÜZELTİLDİ
+- **Sorun**: `@/` path mapping build sırasında hatalara yol açıyordu
+- **Çözüm**: `tsconfig.json`'dan `baseUrl` ve `paths` kaldırıldı
+- **Sonuç**: Tüm import'lar relative path kullanacak şekilde güncellendi
 
-### 2. **Import Tutarsızlığı** ✅ DÜZELTILDI  
-- **Sorun**: `index.tsx`'te relative import kullanılıyordu
-- **Çözüm**: Tüm import'lar `@/` syntax'ına çevrildi
-- **Sonuç**: Proje genelinde tutarlı import yapısı
+### 2. **Import Tutarsızlığı** ✅ DÜZELTİLDİ
+- **Sorun**: Farklı dosyalarda `@/` ve relative import karışık kullanılıyordu
+- **Çözüm**: `@/` path mapping kaldırıldığı için tüm dosyalar relative import kullanacak şekilde düzenlendi
+- **Sonuç**: Proje genelinde tutarlı ve basit import yapısı
 
 ## 🔧 EK OPTİMİZASYON ÖNERİLERİ
 
@@ -57,8 +57,8 @@ Eğer hala hata alırsanız:
 - Ana path mapping sorunu çözüldü
 - Proje artık build alabilmelidir
 - Font taşıma işlemini manuel yapmanız gerekiyor
-- Gelecekte import tutarlılığını koruyun (hep `@/` kullanın)
+- Gelecekte import tutarlılığını koruyun (relative path'ler kullanın)
 
 ---
 **Çözüm Tarihi:** 2025-07-04  
-**Ana Düzeltme:** tsconfig.json path mapping eklendi
+**Ana Düzeltme:** tsconfig.json'dan path mapping kaldırıldı
