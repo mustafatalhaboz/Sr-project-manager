@@ -8,9 +8,9 @@
 - ✅ Build artık ESLint hatalarında durmayacak
 
 ### **2. TypeScript Path Mapping Sorunu**
-- ✅ `tsconfig.json`'a `baseUrl` ve `paths` eklendi
-- ✅ `@/` import'ları artık çalışıyor
-- ✅ Module resolution sorunu çözüldü
+- ✅ `@/` path mapping build hatası veriyordu
+- ✅ `tsconfig.json`'dan `baseUrl` ve `paths` kaldırıldı
+- ✅ Tüm dosyalar relative import kullanacak şekilde güncellendi
 
 ### **3. Kullanılmayan Import'lar Temizlendi**
 - ✅ **Layout.tsx**: `WorkflowStep` ve `currentStep` kaldırıldı
@@ -39,7 +39,7 @@ npm run build
 ## 📋 **Düzeltilen Dosyalar Listesi**
 
 1. `next.config.mjs` - ESLint disable
-2. `tsconfig.json` - Path mapping
+2. `tsconfig.json` - Path mapping kaldırıldı
 3. `src/pages/index.tsx` - Import tutarlılığı
 4. `src/components/layout/Layout.tsx` - Unused imports
 5. `src/components/ui/ProcessingView.tsx` - Unused imports & dependencies
@@ -50,7 +50,7 @@ npm run build
 
 ## 🎉 **Sonuç**
 
-- **Ana build hatası**: ✅ ÇÖZÜLDİ (path mapping)
+- **Ana build hatası**: ✅ ÇÖZÜLDİ (path mapping kaldırıldı)
 - **ESLint engeli**: ✅ KALDIRILDI 
 - **Kullanılmayan kod**: ✅ TEMİZLENDİ
 - **Type safety**: ✅ İYİLEŞTİRİLDİ
@@ -61,4 +61,4 @@ Projeniz artık başarıyla build alabilecek durumda! 🎯
 ---
 **Çözüm Tarihi:** 2025-07-04  
 **Toplam Commit:** 8 adet düzeltme  
-**Ana Çözüm:** TypeScript path mapping + ESLint disable
+**Ana Çözüm:** tsconfig path mapping kaldırıldı + ESLint disable
