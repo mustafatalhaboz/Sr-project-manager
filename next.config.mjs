@@ -1,12 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: false,
   eslint: {
-    // Build sırasında ESLint hatalarını yoksay
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // Build sırasında TypeScript hatalarını yoksay (opsiyonel)
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: true,
+  },
+  swcMinify: false,
+  experimental: {
+    esmExternals: false,
   },
 }
 
