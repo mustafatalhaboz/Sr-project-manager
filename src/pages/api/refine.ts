@@ -14,6 +14,13 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Environment variable kontrolü
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ 
+      error: 'OpenAI API key tanımlı değil. Lütfen environment variables kontrolü yapın.' 
+    });
+  }
+
   try {
     const { analysis, feedback, project }: { 
       analysis: AIAnalysisResult; 

@@ -14,11 +14,26 @@ export async function analyzeRequest(
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'API çağrısı başarısız');
+      let errorMessage = 'API çağrısı başarısız';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch {
+        errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      }
+      throw new Error(errorMessage);
     }
 
-    const result = await response.json();
+    const responseText = await response.text();
+    if (!responseText) {
+      throw new Error('API\'den boş yanıt alındı');
+    }
+
+    const result = JSON.parse(responseText);
+    if (!result.data) {
+      throw new Error('API yanıtında data bulunamadı');
+    }
+    
     return result.data;
   } catch (error) {
     console.error('AI analiz hatası:', error);
@@ -44,11 +59,26 @@ export async function refineAnalysis(
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'API çağrısı başarısız');
+      let errorMessage = 'API çağrısı başarısız';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch {
+        errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      }
+      throw new Error(errorMessage);
     }
 
-    const result = await response.json();
+    const responseText = await response.text();
+    if (!responseText) {
+      throw new Error('API\'den boş yanıt alındı');
+    }
+
+    const result = JSON.parse(responseText);
+    if (!result.data) {
+      throw new Error('API yanıtında data bulunamadı');
+    }
+    
     return result.data;
   } catch (error) {
     console.error('AI refinement hatası:', error);
