@@ -24,8 +24,9 @@ export default function Validation() {
     }
 
     try {
-      // Parse validation data
-      const parsedData = JSON.parse(dataString as string) as ValidationData;
+      // Decode and parse validation data
+      const decodedData = decodeURIComponent(dataString as string);
+      const parsedData = JSON.parse(decodedData) as ValidationData;
       
       // Validate the parsed data
       if (!parsedData.request || !parsedData.analysis || !parsedData.project) {

@@ -25,15 +25,15 @@ const ProcessingView: React.FC<ProcessingViewProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isComplete, setIsComplete] = useState(false);
 
-  const processingSteps = [
-    { id: 1, message: 'Talep metni analiz ediliyor...', duration: 2000 },
-    { id: 2, message: 'Proje bağlamı değerlendiriliyor...', duration: 1500 },
-    { id: 3, message: 'Teknik gereksinimler belirleniyor...', duration: 2500 },
-    { id: 4, message: 'Sonuçlar hazırlanıyor...', duration: 1000 }
-  ];
-
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
+    
+    const processingSteps = [
+      { id: 1, message: 'Talep metni analiz ediliyor...', duration: 2000 },
+      { id: 2, message: 'Proje bağlamı değerlendiriliyor...', duration: 1500 },
+      { id: 3, message: 'Teknik gereksinimler belirleniyor...', duration: 2500 },
+      { id: 4, message: 'Sonuçlar hazırlanıyor...', duration: 1000 }
+    ];
     
     const processAnalysis = async () => {
       try {
@@ -69,14 +69,16 @@ const ProcessingView: React.FC<ProcessingViewProps> = ({
 
         // Validation sayfasına yönlendir
         timeoutId = setTimeout(() => {
+          const validationData = {
+            request: requestData,
+            analysis: analysisResult,
+            project: project
+          };
+          
           router.push({
             pathname: '/validation',
             query: {
-              data: JSON.stringify({
-                request: requestData,
-                analysis: analysisResult,
-                project: project
-              })
+              data: encodeURIComponent(JSON.stringify(validationData))
             }
           });
         }, 1500);
@@ -96,7 +98,7 @@ const ProcessingView: React.FC<ProcessingViewProps> = ({
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [requestData, project, router, processingSteps]);
+  }, [requestData, project, router]);
 
   const handleBack = () => {
     router.push('/');
@@ -161,7 +163,12 @@ const ProcessingView: React.FC<ProcessingViewProps> = ({
 
         {/* Processing Steps */}
         <div className="space-y-4 mb-8">
-          {processingSteps.map((step) => {
+          {[
+            { id: 1, message: 'Talep metni analiz ediliyor...' },
+            { id: 2, message: 'Proje bağlamı değerlendiriliyor...' },
+            { id: 3, message: 'Teknik gereksinimler belirleniyor...' },
+            { id: 4, message: 'Sonuçlar hazırlanıyor...' }
+          ].map((step) => {
             const isCurrentStep = step.id === processingState.currentStep;
             const isCompleted = step.id < processingState.currentStep || isComplete;
 
