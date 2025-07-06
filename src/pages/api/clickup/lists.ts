@@ -52,7 +52,8 @@ async function handler(
         headers: {
           'Authorization': process.env.CLICKUP_API_TOKEN,
           'Content-Type': 'application/json'
-        }
+        },
+        timeout: 10000
       }
     );
 
@@ -74,7 +75,8 @@ async function handler(
             headers: {
               'Authorization': process.env.CLICKUP_API_TOKEN,
               'Content-Type': 'application/json'
-            }
+            },
+            timeout: 5000
           }
         );
 
@@ -89,7 +91,8 @@ async function handler(
             headers: {
               'Authorization': process.env.CLICKUP_API_TOKEN,
               'Content-Type': 'application/json'
-            }
+            },
+            timeout: 5000
           }
         );
 
@@ -101,7 +104,8 @@ async function handler(
                 headers: {
                   'Authorization': process.env.CLICKUP_API_TOKEN,
                   'Content-Type': 'application/json'
-                }
+                },
+                timeout: 5000
               }
             );
 
@@ -137,17 +141,24 @@ async function handler(
     
     let errorMessage = 'ClickUp list\'leri alınamadı.';
     
-    if (error && typeof error === 'object' && 'response' in error) {
-      const axiosError = error as { response?: { status?: number; data?: { err?: string } } };
-      
-      if (axiosError.response?.status === 401) {
-        errorMessage = 'ClickUp API anahtarı geçersiz.';
-      } else if (axiosError.response?.status === 403) {
-        errorMessage = 'Bu workspace\'e erişim izniniz yok.';
-      } else if (axiosError.response?.status === 404) {
-        errorMessage = 'Workspace veya team bulunamadı.';
-      } else if (axiosError.response?.data?.err) {
-        errorMessage = `ClickUp API hatası: ${axiosError.response.data.err}`;
+    if (error && typeof error === 'object') {
+      // Timeout hatası kontrolü
+      if ('code' in error && error.code === 'ECONNABORTED') {
+        errorMessage = 'İstek zaman aşımına uğradı. Lütfen tekrar deneyin.';
+      } else if ('message' in error && typeof error.message === 'string' && error.message.includes('timeout')) {
+        errorMessage = 'İstek zaman aşımına uğradı. Lütfen tekrar deneyin.';
+      } else if ('response' in error) {
+        const axiosError = error as { response?: { status?: number; data?: { err?: string } } };
+        
+        if (axiosError.response?.status === 401) {
+          errorMessage = 'ClickUp API anahtarı geçersiz.';
+        } else if (axiosError.response?.status === 403) {
+          errorMessage = 'Bu workspace\'e erişim izniniz yok.';
+        } else if (axiosError.response?.status === 404) {
+          errorMessage = 'Workspace veya team bulunamadı.';
+        } else if (axiosError.response?.data?.err) {
+          errorMessage = `ClickUp API hatası: ${axiosError.response.data.err}`;
+        }
       }
     }
     

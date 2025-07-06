@@ -23,12 +23,7 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
 
   // Load projects on mount
   useEffect(() => {
-    const abortController = new AbortController();
-    loadProjects(abortController.signal);
-    
-    return () => {
-      abortController.abort();
-    };
+    loadProjects();
   }, []);
 
   // Click outside to close
@@ -45,7 +40,7 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
     };
   }, []);
 
-  const loadProjects = async (signal?: AbortSignal) => {
+  const loadProjects = async () => {
     // Prevent concurrent requests
     if (loadingRef.current) {
       return;
@@ -56,23 +51,13 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
     setError(null);
     
     try {
-      const projectList = await getProjects(signal);
-      
-      // Check if component is still mounted and request not aborted
-      if (!signal?.aborted && loadingRef.current) {
-        setProjects(projectList);
-      }
+      const projectList = await getProjects();
+      setProjects(projectList);
     } catch (err) {
-      // Don't set error if request was aborted
-      if (!signal?.aborted && loadingRef.current) {
-        setError(err instanceof Error ? err.message : 'Projeler yüklenemedi');
-      }
+      setError(err instanceof Error ? err.message : 'Projeler yüklenemedi');
     } finally {
-      // Reset loading state only if component is still mounted
-      if (!signal?.aborted) {
-        loadingRef.current = false;
-        setIsLoading(false);
-      }
+      loadingRef.current = false;
+      setIsLoading(false);
     }
   };
 
