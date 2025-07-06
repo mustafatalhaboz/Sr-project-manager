@@ -54,8 +54,8 @@ Lütfen analizi geri bildirime göre düzenle ve aynı JSON formatında yanıtla
   "technicalRequirements": ["Gereksinim 1", "Gereksinim 2"],
   "acceptanceCriteria": ["Kriter 1", "Kriter 2"],
   "tags": ["tag1", "tag2"],
-  "assignee": "Opsiyonel atanan kişi",
-  "dueDate": "Opsiyonel tarih (YYYY-MM-DD)"
+  "assignee": "Opsiyonel atanan kişi", 
+  "dueDate": null
 }
 
 Türkçe yanıtla.

@@ -55,7 +55,7 @@ Lütfen bu talebi analiz et ve aşağıdaki JSON formatında yanıtla:
   "acceptanceCriteria": ["Kriter 1", "Kriter 2"],
   "tags": ["tag1", "tag2"],
   "assignee": "Opsiyonel atanan kişi",
-  "dueDate": "Opsiyonel tarih (YYYY-MM-DD)"
+  "dueDate": null
 }
 
 Türkçe yanıtla ve projenin teknik bağlamına uygun analiz yap.

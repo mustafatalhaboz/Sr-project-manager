@@ -62,6 +62,15 @@ async function handler(
       return res.status(400).json({ error: 'Project ClickUp List ID tanımlı değil' });
     }
 
+    // Due date validation ve processing
+    let dueDateTimestamp = undefined;
+    if (analysis.dueDate && analysis.dueDate !== 'null' && analysis.dueDate.trim() !== '') {
+      const parsedDate = new Date(analysis.dueDate);
+      if (!isNaN(parsedDate.getTime()) && parsedDate.getFullYear() > 2020) {
+        dueDateTimestamp = parsedDate.getTime();
+      }
+    }
+
     // ClickUp task data hazırla
     const taskData = {
       name: analysis.title,
@@ -70,7 +79,7 @@ async function handler(
       status: 'to do',
       tags: analysis.tags,
       time_estimate: convertTimeToMilliseconds(analysis.estimatedTime),
-      due_date: analysis.dueDate ? new Date(analysis.dueDate).getTime() : undefined
+      due_date: dueDateTimestamp
     };
 
     // ClickUp API çağrısı
