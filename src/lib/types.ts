@@ -5,13 +5,26 @@ export interface Project {
   description: string;
   techStack: string[];
   aiContext: string;
+  spaceName?: string;
+  folderName?: string;
+  displayName?: string;
 }
 
 export interface RequestData {
   text: string;
   projectId: string;
+  clickupListId: string; // Seçilen board'un gerçek ID'si
   priority: 'low' | 'medium' | 'high' | 'urgent';
   type: 'bug' | 'feature' | 'improvement' | 'question';
+}
+
+// ClickUp API'den gelen list verisi
+export interface ClickUpListData {
+  id: string;
+  name: string;
+  spaceName: string;
+  folderName: string | null;
+  displayName: string;
 }
 
 export interface AIAnalysisResult {

@@ -33,7 +33,12 @@ const ValidationView: React.FC<ValidationViewProps> = ({ data, className = '' })
     setError(null);
 
     try {
-      const task = await createTask(currentAnalysis, data.project);
+      // Seçilen board ID'sini kullan
+      const task = await createTask(
+        currentAnalysis, 
+        data.project, 
+        data.request.clickupListId
+      );
       setTaskUrl(task.url);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Task oluşturulamadı');

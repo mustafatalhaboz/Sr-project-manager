@@ -1,8 +1,9 @@
-import { AIAnalysisResult, ClickUpTask, Project } from './types';
+import { AIAnalysisResult, ClickUpTask, Project, ClickUpListData } from './types';
 
 export async function createTask(
   analysis: AIAnalysisResult,
-  project: Project
+  project: Project,
+  clickupListId?: string
 ): Promise<ClickUpTask> {
   try {
     const response = await fetch('/api/clickup/create-task', {
@@ -10,7 +11,7 @@ export async function createTask(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ analysis, project }),
+      body: JSON.stringify({ analysis, project, clickupListId }),
     });
 
     if (!response.ok) {
@@ -41,6 +42,42 @@ export async function createTask(
       throw error;
     }
     throw new Error('ClickUp task oluşturulamadı. Lütfen tekrar deneyin.');
+  }
+}
+
+// Fetch ClickUp workspace lists
+export async function fetchWorkspaceLists(): Promise<ClickUpListData[]> {
+  try {
+    const response = await fetch('/api/clickup/lists');
+    
+    if (!response.ok) {
+      let errorMessage = 'ClickUp list\'leri alınamadı';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch {
+        errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    const responseText = await response.text();
+    if (!responseText) {
+      throw new Error('API\'den boş yanıt alındı');
+    }
+
+    const result = JSON.parse(responseText);
+    if (!result.data) {
+      throw new Error('API yanıtında data bulunamadı');
+    }
+    
+    return result.data;
+  } catch (error) {
+    console.error('ClickUp list\'leri çekme hatası:', error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('ClickUp list\'leri alınamadı. Lütfen tekrar deneyin.');
   }
 }
 

@@ -49,17 +49,21 @@ async function handler(
   }
 
   try {
-    const { analysis, project }: { 
+    const { analysis, project, clickupListId }: { 
       analysis: AIAnalysisResult; 
-      project: Project 
+      project: Project;
+      clickupListId?: string;
     } = req.body;
 
     if (!analysis || !project) {
       return res.status(400).json({ error: 'Analysis ve project bilgileri gerekli' });
     }
 
-    if (!project.clickupListId) {
-      return res.status(400).json({ error: 'Project ClickUp List ID tanımlı değil' });
+    // Öncelik sırası: body'den gelen clickupListId > project.clickupListId
+    const targetListId = clickupListId || project.clickupListId;
+    
+    if (!targetListId) {
+      return res.status(400).json({ error: 'ClickUp List ID tanımlı değil' });
     }
 
     // Due date validation ve processing
@@ -84,7 +88,7 @@ async function handler(
 
     // ClickUp API çağrısı
     const response = await axios.post(
-      `${CLICKUP_API_URL}/list/${project.clickupListId}/task`,
+      `${CLICKUP_API_URL}/list/${targetListId}/task`,
       taskData,
       {
         headers: {

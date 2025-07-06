@@ -1,49 +1,71 @@
-import { Project } from './types';
+import { Project, ClickUpListData } from './types';
+import { fetchWorkspaceLists } from './clickup';
 
-const projectsData = {
-  "projects": [
-    {
-      "id": "ecommerce",
-      "name": "E-commerce Web Sitesi", 
-      "clickupListId": "901505961511",
-      "description": "Ana e-commerce platformu",
-      "techStack": ["Next.js", "React", "TailwindCSS"],
-      "aiContext": "Bu e-commerce projesi için bug fix ve feature request analizleri yap"
-    },
-    {
-      "id": "blog",
-      "name": "Kurumsal Blog",
-      "clickupListId": "901505961511",
-      "description": "İçerik yönetim sistemi",
-      "techStack": ["Next.js", "Sanity", "Vercel"],
-      "aiContext": "Blog ve CMS projeleri için teknik analiz yap"
-    },
-    {
-      "id": "dashboard", 
-      "name": "Admin Dashboard",
-      "clickupListId": "901505961511",
-      "description": "Yönetim paneli uygulaması",
-      "techStack": ["Next.js", "React", "Chart.js"],
-      "aiContext": "Dashboard ve admin panel projeleri için teknik analiz yap"
-    }
-  ]
-};
 
-export function getProjects(): Project[] {
-  return projectsData.projects;
+// Cache for projects
+let cachedProjects: Project[] | null = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Convert ClickUp list to Project interface
+export function mapClickUpListToProject(list: ClickUpListData): Project {
+  return {
+    id: list.id,
+    name: list.name,
+    clickupListId: list.id,
+    description: `${list.spaceName} projesi`,
+    techStack: ["Next.js", "React", "TypeScript"], // Default tech stack
+    aiContext: "Bu proje için teknik analiz ve görev yönetimi yap",
+    spaceName: list.spaceName,
+    folderName: list.folderName,
+    displayName: list.displayName
+  };
+}
+
+export async function getProjects(): Promise<Project[]> {
+  // Check cache first
+  const now = Date.now();
+  if (cachedProjects && (now - cacheTimestamp) < CACHE_DURATION) {
+    return cachedProjects;
+  }
+
+  try {
+    // Fetch from ClickUp API
+    const clickUpLists = await fetchWorkspaceLists();
+    const projects = clickUpLists.map(mapClickUpListToProject);
+    
+    // Update cache
+    cachedProjects = projects;
+    cacheTimestamp = now;
+    
+    return projects;
+  } catch (error) {
+    console.error('ClickUp API\'den projeler alınamadı:', error);
+    
+    // Throw error instead of using fallback - force user to fix API connection
+    throw new Error('ClickUp API bağlantısı başarısız. Lütfen API ayarlarınızı kontrol edin.');
+  }
+}
+
+// Sync version for backward compatibility (returns cached data)
+export function getProjectsSync(): Project[] {
+  return cachedProjects || [];
 }
 
 export function getProjectById(id: string): Project | undefined {
-  return projectsData.projects.find(project => project.id === id);
+  const currentProjects = cachedProjects || [];
+  return currentProjects.find(project => project.id === id);
 }
 
 export function getProjectByName(name: string): Project | undefined {
-  return projectsData.projects.find(project => project.name === name);
+  const currentProjects = cachedProjects || [];
+  return currentProjects.find(project => project.name === name);
 }
 
 export function searchProjects(query: string): Project[] {
   const searchTerm = query.toLowerCase();
-  return projectsData.projects.filter(project =>
+  const currentProjects = cachedProjects || [];
+  return currentProjects.filter(project =>
     project.name.toLowerCase().includes(searchTerm) ||
     project.description.toLowerCase().includes(searchTerm) ||
     project.techStack.some(tech => tech.toLowerCase().includes(searchTerm))
@@ -62,9 +84,16 @@ export function validateProject(project: Project): boolean {
   );
 }
 
-export function getProjectOptions(): { value: string; label: string }[] {
-  return projectsData.projects.map(project => ({
+export async function getProjectOptions(): Promise<{ value: string; label: string }[]> {
+  const projects = await getProjects();
+  return projects.map(project => ({
     value: project.id,
-    label: project.name
+    label: project.displayName || project.name
   }));
+}
+
+// Clear cache function for manual refresh
+export function clearProjectsCache(): void {
+  cachedProjects = null;
+  cacheTimestamp = 0;
 }

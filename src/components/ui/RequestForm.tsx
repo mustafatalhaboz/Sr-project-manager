@@ -3,8 +3,6 @@ import { useRouter } from 'next/router';
 import { Send, AlertCircle, FileText, Tag, Clock } from 'lucide-react';
 import { Project, RequestData } from '../../lib/types';
 import ProjectSelector from './ProjectSelector';
-import { getProjects } from '../../lib/projects';
-
 interface RequestFormProps {
   className?: string;
 }
@@ -17,8 +15,6 @@ const RequestForm: React.FC<RequestFormProps> = ({ className = '' }) => {
   const [type, setType] = useState<'bug' | 'feature' | 'improvement' | 'question'>('feature');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const projects = getProjects();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +41,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ className = '' }) => {
       const requestData: RequestData = {
         text: requestText.trim(),
         projectId: selectedProject.id,
+        clickupListId: selectedProject.clickupListId,
         priority,
         type
       };
@@ -103,7 +100,6 @@ const RequestForm: React.FC<RequestFormProps> = ({ className = '' }) => {
         )}
 
         <ProjectSelector
-          projects={projects}
           selectedProject={selectedProject}
           onProjectSelect={setSelectedProject}
         />
