@@ -1,12 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
 import { AIAnalysisResult, Project } from '../../lib/types';
+import { withRateLimit } from '../../lib/rateLimit';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -17,7 +18,7 @@ export default async function handler(
   // Environment variable kontrolü
   if (!process.env.OPENAI_API_KEY) {
     return res.status(500).json({ 
-      error: 'OpenAI API key tanımlı değil. Lütfen environment variables kontrolü yapın.' 
+      error: 'OpenAI API key yapılandırması eksik. Lütfen sistem yöneticisi ile iletişime geçin.'
     });
   }
 
@@ -109,3 +110,5 @@ Türkçe yanıtla.
     res.status(500).json({ error: errorMessage });
   }
 }
+
+export default withRateLimit(handler, 'ai');

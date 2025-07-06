@@ -45,7 +45,7 @@ export async function createTask(
 }
 
 // Test function for ClickUp connectivity
-export async function testClickUpConnection(): Promise<{ success: boolean; message: string; user?: any }> {
+export async function testClickUpConnection(): Promise<{ success: boolean; message: string; user?: unknown }> {
   try {
     const response = await fetch('/api/clickup/test');
     
@@ -63,7 +63,7 @@ export async function testClickUpConnection(): Promise<{ success: boolean; messa
       message: result.message,
       user: result.user
     };
-  } catch (error) {
+  } catch {
     return {
       success: false,
       message: 'ClickUp bağlantı testi sırasında hata oluştu'

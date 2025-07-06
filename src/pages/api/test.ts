@@ -17,7 +17,7 @@ export default async function handler(
       hasOpenAIKey,
       timestamp: new Date().toISOString()
     });
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Server error' });
   }
 }

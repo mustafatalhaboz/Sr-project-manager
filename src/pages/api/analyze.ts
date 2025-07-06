@@ -1,12 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
 import { AIAnalysisResult, Project, RequestData } from '../../lib/types';
+import { withRateLimit } from '../../lib/rateLimit';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // NEXT_PUBLIC_ prefix'i olmadan!
 });
 
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -17,12 +18,7 @@ export default async function handler(
   // Environment variable kontrolü
   if (!process.env.OPENAI_API_KEY) {
     return res.status(500).json({ 
-      error: 'OpenAI API key tanımlı değil. Lütfen environment variables kontrolü yapın.',
-      debug: {
-        nodeEnv: process.env.NODE_ENV,
-        hasKey: !!process.env.OPENAI_API_KEY,
-        allEnvKeys: Object.keys(process.env).filter(k => k.includes('OPENAI'))
-      }
+      error: 'OpenAI API key yapılandırması eksik. Lütfen sistem yöneticisi ile iletişime geçin.'
     });
   }
 
@@ -115,3 +111,5 @@ Türkçe yanıtla ve projenin teknik bağlamına uygun analiz yap.
     res.status(500).json({ error: errorMessage });
   }
 }
+
+export default withRateLimit(handler, 'ai');

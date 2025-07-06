@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
+import { withRateLimit } from '../../../lib/rateLimit';
 
 const CLICKUP_API_URL = 'https://api.clickup.com/api/v2';
 
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -15,10 +16,7 @@ export default async function handler(
     // Environment variable kontrolü
     if (!process.env.CLICKUP_API_TOKEN) {
       return res.status(500).json({ 
-        error: 'ClickUp API token tanımlı değil.',
-        debug: {
-          hasToken: !!process.env.CLICKUP_API_TOKEN
-        }
+        error: 'ClickUp API yapılandırması eksik. Lütfen sistem yöneticisi ile iletişime geçin.'
       });
     }
 
@@ -42,23 +40,26 @@ export default async function handler(
       timestamp: new Date().toISOString()
     });
 
-  } catch (error: any) {
-    console.error('ClickUp Test API Error:', error.response?.data || error.message);
+  } catch (error: unknown) {
+    console.error('ClickUp Test API Error:', error);
     
     let errorMessage = 'ClickUp API bağlantısı başarısız.';
     
-    if (error.response?.status === 401) {
-      errorMessage = 'ClickUp API anahtarı geçersiz.';
-    } else if (error.response?.status === 403) {
-      errorMessage = 'ClickUp API erişim izni yok.';
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response?: { status?: number; data?: unknown } };
+      
+      if (axiosError.response?.status === 401) {
+        errorMessage = 'ClickUp API anahtarı geçersiz.';
+      } else if (axiosError.response?.status === 403) {
+        errorMessage = 'ClickUp API erişim izni yok.';
+      }
     }
     
     res.status(500).json({ 
       error: errorMessage,
-      debug: process.env.NODE_ENV === 'development' ? {
-        status: error.response?.status,
-        data: error.response?.data
-      } : undefined
+      debug: process.env.NODE_ENV === 'development' ? error : undefined
     });
   }
 }
+
+export default withRateLimit(handler, 'clickup');
