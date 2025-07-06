@@ -174,12 +174,6 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
                       <div className="text-xs text-gray-400 mt-1">
                         {project.techStack.join(', ')}
                       </div>
-                      {project.spaceName && (
-                        <div className="text-xs text-blue-600 mt-1">
-                          {project.spaceName}
-                          {project.folderName && ` / ${project.folderName}`}
-                        </div>
-                      )}
                     </div>
                   </div>
                 </button>

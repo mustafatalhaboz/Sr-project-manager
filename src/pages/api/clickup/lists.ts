@@ -123,9 +123,7 @@ async function handler(
       name: list.name,
       spaceName: list.space.name,
       folderName: list.folder?.name || null,
-      displayName: list.folder ? 
-        `${list.space.name} / ${list.folder.name} / ${list.name}` : 
-        `${list.space.name} / ${list.name}`
+      displayName: list.name // Sadece proje adı göster
     }));
 
     res.status(200).json({ 
