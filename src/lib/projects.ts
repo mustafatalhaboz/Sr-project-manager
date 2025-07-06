@@ -22,7 +22,7 @@ export function mapClickUpListToProject(list: ClickUpListData): Project {
   };
 }
 
-export async function getProjects(): Promise<Project[]> {
+export async function getProjects(signal?: AbortSignal): Promise<Project[]> {
   // Check cache first
   const now = Date.now();
   if (cachedProjects && (now - cacheTimestamp) < CACHE_DURATION) {
@@ -31,15 +31,28 @@ export async function getProjects(): Promise<Project[]> {
 
   try {
     // Fetch from ClickUp API
-    const clickUpLists = await fetchWorkspaceLists();
+    const clickUpLists = await fetchWorkspaceLists(signal);
+    
+    // Check if request was aborted before processing
+    if (signal?.aborted) {
+      throw new Error('Request aborted');
+    }
+    
     const projects = clickUpLists.map(mapClickUpListToProject);
     
-    // Update cache
-    cachedProjects = projects;
-    cacheTimestamp = now;
+    // Update cache only if request wasn't aborted
+    if (!signal?.aborted) {
+      cachedProjects = projects;
+      cacheTimestamp = now;
+    }
     
     return projects;
   } catch (error) {
+    // Don't log abort errors
+    if (error instanceof Error && error.message === 'Request aborted') {
+      throw error;
+    }
+    
     console.error('ClickUp API\'den projeler alınamadı:', error);
     
     // Throw error instead of using fallback - force user to fix API connection

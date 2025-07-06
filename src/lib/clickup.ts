@@ -46,9 +46,11 @@ export async function createTask(
 }
 
 // Fetch ClickUp workspace lists
-export async function fetchWorkspaceLists(): Promise<ClickUpListData[]> {
+export async function fetchWorkspaceLists(signal?: AbortSignal): Promise<ClickUpListData[]> {
   try {
-    const response = await fetch('/api/clickup/lists');
+    const response = await fetch('/api/clickup/lists', {
+      signal // Pass AbortSignal to fetch
+    });
     
     if (!response.ok) {
       let errorMessage = 'ClickUp list\'leri alınamadı';
@@ -73,6 +75,11 @@ export async function fetchWorkspaceLists(): Promise<ClickUpListData[]> {
     
     return result.data;
   } catch (error) {
+    // Handle abort errors gracefully
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Request aborted');
+    }
+    
     console.error('ClickUp list\'leri çekme hatası:', error);
     if (error instanceof Error) {
       throw error;

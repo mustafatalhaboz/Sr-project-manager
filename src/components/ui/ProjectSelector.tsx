@@ -19,10 +19,16 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const loadingRef = useRef<boolean>(false); // Race condition prevention
 
   // Load projects on mount
   useEffect(() => {
-    loadProjects();
+    const abortController = new AbortController();
+    loadProjects(abortController.signal);
+    
+    return () => {
+      abortController.abort();
+    };
   }, []);
 
   // Click outside to close
@@ -39,23 +45,46 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
     };
   }, []);
 
-  const loadProjects = async () => {
+  const loadProjects = async (signal?: AbortSignal) => {
+    // Prevent concurrent requests
+    if (loadingRef.current) {
+      return;
+    }
+    
+    loadingRef.current = true;
     setIsLoading(true);
     setError(null);
     
     try {
-      const projectList = await getProjects();
-      setProjects(projectList);
+      const projectList = await getProjects(signal);
+      
+      // Check if component is still mounted and request not aborted
+      if (!signal?.aborted && loadingRef.current) {
+        setProjects(projectList);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Projeler yüklenemedi');
+      // Don't set error if request was aborted
+      if (!signal?.aborted && loadingRef.current) {
+        setError(err instanceof Error ? err.message : 'Projeler yüklenemedi');
+      }
     } finally {
-      setIsLoading(false);
+      // Reset loading state only if component is still mounted
+      if (!signal?.aborted) {
+        loadingRef.current = false;
+        setIsLoading(false);
+      }
     }
   };
 
   const handleRefresh = async () => {
+    // Prevent refresh if already loading
+    if (loadingRef.current) {
+      return;
+    }
+    
     clearProjectsCache();
-    await loadProjects();
+    const abortController = new AbortController();
+    await loadProjects(abortController.signal);
   };
 
   const handleProjectClick = (project: Project) => {
