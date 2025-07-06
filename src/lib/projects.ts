@@ -4,8 +4,8 @@ const projectsData = {
   "projects": [
     {
       "id": "ecommerce",
-      "name": "E-commerce Web Sitesi",
-      "clickupListId": "123456789",
+      "name": "E-commerce Web Sitesi", 
+      "clickupListId": "901505961511",
       "description": "Ana e-commerce platformu",
       "techStack": ["Next.js", "React", "TailwindCSS"],
       "aiContext": "Bu e-commerce projesi için bug fix ve feature request analizleri yap"
@@ -13,15 +13,15 @@ const projectsData = {
     {
       "id": "blog",
       "name": "Kurumsal Blog",
-      "clickupListId": "987654321",
+      "clickupListId": "901505961511",
       "description": "İçerik yönetim sistemi",
       "techStack": ["Next.js", "Sanity", "Vercel"],
       "aiContext": "Blog ve CMS projeleri için teknik analiz yap"
     },
     {
-      "id": "dashboard",
+      "id": "dashboard", 
       "name": "Admin Dashboard",
-      "clickupListId": "555666777",
+      "clickupListId": "901505961511",
       "description": "Yönetim paneli uygulaması",
       "techStack": ["Next.js", "React", "Chart.js"],
       "aiContext": "Dashboard ve admin panel projeleri için teknik analiz yap"
