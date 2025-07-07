@@ -17,6 +17,7 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef<boolean>(false); // Race condition prevention
@@ -67,9 +68,13 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
       return;
     }
     
-    clearProjectsCache();
-    const abortController = new AbortController();
-    await loadProjects(abortController.signal);
+    setIsRefreshing(true);
+    try {
+      clearProjectsCache();
+      await loadProjects();
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const handleProjectClick = (project: Project) => {
@@ -89,7 +94,7 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
           disabled={isLoading}
           className="flex items-center text-xs text-blue-600 hover:text-blue-800 disabled:opacity-50"
         >
-          <RefreshCw className={`w-3 h-3 mr-1 ${isLoading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3 h-3 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
           Yenile
         </button>
       </div>
