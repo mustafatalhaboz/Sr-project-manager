@@ -104,24 +104,6 @@ const RequestForm: React.FC<RequestFormProps> = ({ className = '' }) => {
           onProjectSelect={setSelectedProject}
         />
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <FileText className="w-4 h-4 inline mr-2" />
-            Talep Açıklaması
-          </label>
-          <textarea
-            value={requestText}
-            onChange={(e) => setRequestText(e.target.value)}
-            placeholder="Talebinizi detaylı olarak açıklayın..."
-            rows={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-            disabled={isSubmitting}
-          />
-          <div className="mt-1 text-sm text-gray-500">
-            {requestText.length}/500 karakter
-          </div>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -173,6 +155,24 @@ const RequestForm: React.FC<RequestFormProps> = ({ className = '' }) => {
                 {priority === 'urgent' && 'Acil'}
               </span>
             </div>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <FileText className="w-4 h-4 inline mr-2" />
+            Talep Açıklaması
+          </label>
+          <textarea
+            value={requestText}
+            onChange={(e) => setRequestText(e.target.value)}
+            placeholder="Talebinizi detaylı olarak açıklayın..."
+            rows={6}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+            disabled={isSubmitting}
+          />
+          <div className="mt-1 text-sm text-gray-500">
+            {requestText.length}/500 karakter
           </div>
         </div>
 
