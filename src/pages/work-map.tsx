@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Map, Users, Clock, Target, Laugh, TrendingUp, Calendar, AlertTriangle } from 'lucide-react';
+import { Map, Clock, Target, Laugh, TrendingUp, AlertTriangle } from 'lucide-react';
 
 interface TaskData {
   id: string;
@@ -29,7 +29,6 @@ interface WorkMapStats {
 }
 
 const WorkMapPage: React.FC = () => {
-  const [tasks, setTasks] = useState<TaskData[]>([]);
   const [stats, setStats] = useState<WorkMapStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +46,6 @@ const WorkMapPage: React.FC = () => {
       }
       
       const data = await response.json();
-      setTasks(data.tasks);
       setStats(data.stats);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Bir hata oluştu');
@@ -138,7 +136,7 @@ const WorkMapPage: React.FC = () => {
                   <p className="text-sm font-medium text-gray-500">Tamamlanan</p>
                   <p className="text-2xl font-bold text-gray-900">{stats.completedTasks}</p>
                   <p className="text-xs text-gray-500">
-                    %{Math.round((stats.completedTasks / stats.totalTasks) * 100)}
+                    {Math.round((stats.completedTasks / stats.totalTasks) * 100)}%
                   </p>
                 </div>
               </div>
@@ -173,7 +171,7 @@ const WorkMapPage: React.FC = () => {
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex items-center mb-4">
                 <Laugh className="w-6 h-6 text-purple-500 mr-2" />
-                <h2 className="text-xl font-bold text-gray-900">Komik Task'lar</h2>
+                <h2 className="text-xl font-bold text-gray-900">Komik Tasklar</h2>
               </div>
               
               {stats.funnyTasks.length > 0 ? (
@@ -198,7 +196,7 @@ const WorkMapPage: React.FC = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-8">Komik task bulunamadı 🙁</p>
+                <p className="text-gray-500 text-center py-8">Komik task bulunamadı</p>
               )}
             </div>
 
@@ -212,7 +210,7 @@ const WorkMapPage: React.FC = () => {
               <div className="space-y-4">
                 {stats.longestTask && (
                   <div className="border-l-4 border-blue-400 bg-blue-50 p-4 rounded">
-                    <h3 className="font-medium text-blue-900">📏 En Uzun Task</h3>
+                    <h3 className="font-medium text-blue-900">En Uzun Task</h3>
                     <p className="text-sm text-blue-700 mt-1">{stats.longestTask.name}</p>
                     <p className="text-xs text-blue-600">Tahmini: {stats.longestTask.timeEstimate}h</p>
                   </div>
@@ -220,7 +218,7 @@ const WorkMapPage: React.FC = () => {
 
                 {stats.mostTaggedTask && (
                   <div className="border-l-4 border-green-400 bg-green-50 p-4 rounded">
-                    <h3 className="font-medium text-green-900">🏷️ En Çok Etiketli</h3>
+                    <h3 className="font-medium text-green-900">En Çok Etiketli</h3>
                     <p className="text-sm text-green-700 mt-1">{stats.mostTaggedTask.name}</p>
                     <p className="text-xs text-green-600">{stats.mostTaggedTask.tags.length} etiket</p>
                   </div>
@@ -228,7 +226,7 @@ const WorkMapPage: React.FC = () => {
 
                 {stats.oldestTask && (
                   <div className="border-l-4 border-yellow-400 bg-yellow-50 p-4 rounded">
-                    <h3 className="font-medium text-yellow-900">⏰ En Eski Task</h3>
+                    <h3 className="font-medium text-yellow-900">En Eski Task</h3>
                     <p className="text-sm text-yellow-700 mt-1">{stats.oldestTask.name}</p>
                     <p className="text-xs text-yellow-600">
                       {new Date(stats.oldestTask.createdDate).toLocaleDateString('tr-TR')}
@@ -238,7 +236,7 @@ const WorkMapPage: React.FC = () => {
 
                 {stats.urgentWithoutAssignee.length > 0 && (
                   <div className="border-l-4 border-red-400 bg-red-50 p-4 rounded">
-                    <h3 className="font-medium text-red-900">🚨 Acil Ama Sahipsiz</h3>
+                    <h3 className="font-medium text-red-900">Acil Ama Sahipsiz</h3>
                     <p className="text-sm text-red-700 mt-1">
                       {stats.urgentWithoutAssignee.length} acil task hiç kimseye atanmamış!
                     </p>
