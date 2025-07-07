@@ -5,10 +5,19 @@ import {
   upsertProject, 
   updateProjectType, 
   needsAnalysis,
-  initializeDatabase 
+  initializeDatabase,
+  ProjectRecord 
 } from './database';
 import axios from 'axios';
 import OpenAI from 'openai';
+
+// ClickUp Task interface for analysis
+interface ClickUpTaskForAnalysis {
+  id: string;
+  name: string;
+  description?: string;
+  tags?: Array<{ name: string }>;
+}
 
 
 // Cache for projects
@@ -32,8 +41,8 @@ export function mapClickUpListToProject(list: ClickUpListData, projectType?: str
   };
 }
 
-// Convert database record to Project interface
-export function mapDatabaseToProject(dbProject: any): Project {
+// Convert database record to Project interface  
+export function mapDatabaseToProject(dbProject: ProjectRecord): Project {
   return {
     id: dbProject.id,
     name: dbProject.name,
@@ -85,11 +94,11 @@ async function analyzeProjectType(projectName: string, listId: string): Promise<
     }
     
     // Format tasks for AI analysis
-    const formattedTasks = tasks.slice(0, 10).map((task: any) => ({
+    const formattedTasks = tasks.slice(0, 10).map((task: ClickUpTaskForAnalysis) => ({
       id: task.id,
       name: task.name,
       description: task.description || '',
-      tags: task.tags?.map((tag: any) => tag.name) || []
+      tags: task.tags?.map((tag) => tag.name) || []
     }));
     
     // AI analizi yap - OpenAI direkt call
@@ -197,14 +206,7 @@ export async function getProjects(signal?: AbortSignal): Promise<Project[]> {
       console.warn('Database initialization warning:', dbError);
     }
 
-    // 1. Get projects from database
-    let dbProjects: Project[] = [];
-    try {
-      const dbRecords = await getProjectsFromDatabase();
-      dbProjects = dbRecords.map(mapDatabaseToProject);
-    } catch (dbError) {
-      console.warn('Database read warning:', dbError);
-    }
+    // 1. Initialize database (projects will be synced from ClickUp)
 
     // 2. Get current projects from ClickUp
     const clickUpLists = await fetchWorkspaceLists(signal);

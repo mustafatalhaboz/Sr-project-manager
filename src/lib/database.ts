@@ -126,7 +126,7 @@ export async function updateProjectType(
   projectType: string, 
   taskCount: number = 0, 
   aiConfidence: number = 0.8,
-  tasksAnalyzed: any[] = []
+  tasksAnalyzed: unknown[] = []
 ): Promise<void> {
   try {
     // Update project table
