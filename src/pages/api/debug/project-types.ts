@@ -48,7 +48,7 @@ export default async function handler(
     // Test inference function
     const testCases = ['App', 'Hektas', 'Craftolia', 'Efor Takip', 'Mobile App', 'Shop System'];
     
-    function inferProjectTypeFromName(projectName: string): string {
+    const inferProjectTypeFromName = (projectName: string): string => {
       const name = projectName.toLowerCase();
       
       if (name.includes('app') || name.includes('mobile') || name.includes('ios') || name.includes('android')) {
@@ -66,7 +66,7 @@ export default async function handler(
       }
       
       return 'Web Uygulaması';
-    }
+    };
 
     testCases.forEach(projectName => {
       debug.inferences[projectName] = inferProjectTypeFromName(projectName);
