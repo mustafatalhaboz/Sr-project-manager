@@ -123,7 +123,7 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
                   {selectedProject.displayName || selectedProject.name}
                 </span>
                 <span className="text-gray-600 text-sm ml-2">
-                  ({selectedProject.techStack.join(', ')})
+                  ({selectedProject.projectType})
                 </span>
               </div>
             ) : (
@@ -162,7 +162,7 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
                       </div>
                       <div className="text-sm text-gray-500">{project.description}</div>
                       <div className="text-xs text-gray-400 mt-1">
-                        {project.techStack.join(', ')}
+                        {project.projectType}
                       </div>
                     </div>
                   </div>
@@ -179,7 +179,7 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
             <div className="font-medium text-blue-900">Seçilen Proje</div>
             <div className="text-blue-700 mt-1">{selectedProject.description}</div>
             <div className="text-blue-600 text-xs mt-1">
-              Teknolojiler: {selectedProject.techStack.join(', ')}
+              Proje Türü: {selectedProject.projectType}
             </div>
           </div>
         </div>

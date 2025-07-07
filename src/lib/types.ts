@@ -8,6 +8,7 @@ export interface Project {
   spaceName?: string;
   folderName?: string;
   displayName?: string;
+  projectType?: string;
 }
 
 export interface RequestData {
