@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Folder, RefreshCw, AlertCircle } from 'lucide-react';
 import { Project } from '../../lib/types';
-import { getProjects, clearProjectsCache } from '../../lib/projects';
+import { clearProjectsCache } from '../../lib/projects';
 
 interface ProjectSelectorProps {
   selectedProject: Project | null;
@@ -52,8 +52,15 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
     setError(null);
     
     try {
-      const projectList = await getProjects();
-      setProjects(projectList);
+      // Use API endpoint instead of direct getProjects call
+      const response = await fetch('/api/projects');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Projeler yüklenemedi');
+      }
+      
+      const result = await response.json();
+      setProjects(result.data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Projeler yüklenemedi');
     } finally {
@@ -70,7 +77,14 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({
     
     setIsRefreshing(true);
     try {
-      clearProjectsCache();
+      // Clear cache on server-side by calling refresh endpoint
+      try {
+        await fetch('/api/projects/refresh', { method: 'POST' });
+      } catch {
+        // If refresh endpoint doesn't exist, just reload
+      }
+      
+      clearProjectsCache(); // Clear client-side cache
       await loadProjects();
     } finally {
       setIsRefreshing(false);

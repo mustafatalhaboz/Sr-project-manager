@@ -25,26 +25,46 @@ export default function Processing() {
       return;
     }
 
-    try {
-      // Parse request data
-      const parsedRequest = JSON.parse(requestString as string) as RequestData;
-      setRequestData(parsedRequest);
+    async function loadProjectAndData() {
+      try {
+        // Parse request data
+        const parsedRequest = JSON.parse(requestString as string) as RequestData;
+        setRequestData(parsedRequest);
 
-      // Get project info
-      const projectInfo = getProjectById(projectId as string);
-      if (!projectInfo) {
-        setError('Proje bulunamadı. Lütfen geçerli bir proje seçin.');
+        // First try to get project from cache
+        let projectInfo = getProjectById(projectId as string);
+        
+        // If not in cache, try to load projects from API
+        if (!projectInfo) {
+          console.log('Project not found in cache, loading from API...');
+          try {
+            const response = await fetch('/api/projects');
+            if (response.ok) {
+              const result = await response.json();
+              // Now try to find the project again in the fresh data
+              projectInfo = result.data?.find((p: Project) => p.id === projectId);
+            }
+          } catch (apiError) {
+            console.error('Failed to load projects from API:', apiError);
+          }
+        }
+
+        if (!projectInfo) {
+          setError('Proje bulunamadı. Lütfen geçerli bir proje seçin.');
+          setIsLoading(false);
+          return;
+        }
+        
+        setProject(projectInfo);
         setIsLoading(false);
-        return;
+      } catch (err) {
+        console.error('Request parsing error:', err);
+        setError('Talep bilgileri ayrıştırılamadı. Lütfen tekrar deneyin.');
+        setIsLoading(false);
       }
-      setProject(projectInfo);
-
-      setIsLoading(false);
-    } catch (err) {
-      console.error('Request parsing error:', err);
-      setError('Talep bilgileri ayrıştırılamadı. Lütfen tekrar deneyin.');
-      setIsLoading(false);
     }
+
+    loadProjectAndData();
   }, [router.isReady, router.query]);
 
   const handleBack = () => {
