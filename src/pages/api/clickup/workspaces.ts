@@ -64,36 +64,23 @@ async function handler(
     console.log('Team name:', team.name);
     console.log('Available spaces:', allSpaces.map((s: { name: string }) => s.name));
     
-    // Workspace ismi "RED and GREY" ise tek workspace, tüm space'leri ikiye böl
-    let redSpaces, greySpaces;
+    // GEÇICI ÇÖZÜM: Workspace ismine bakma, tüm space'leri eşit dağıt
+    console.log(`📊 WORKSPACE DEBUG INFO:`);
+    console.log(`- Team ID: ${teamId}`);
+    console.log(`- Team Name: "${team.name}"`);
+    console.log(`- Total Spaces: ${allSpaces.length}`);
+    console.log(`- Space Names:`, allSpaces.map((s: { name: string }) => s.name));
     
-    const teamNameUpper = team.name.toUpperCase();
-    const isRedAndGreyWorkspace = teamNameUpper.includes('RED') && teamNameUpper.includes('GREY');
+    // Tüm space'leri eşit olarak ikiye böl
+    const totalSpaces = allSpaces.length;
+    const halfIndex = Math.ceil(totalSpaces / 2);
     
-    console.log(`Is RED and GREY workspace: ${isRedAndGreyWorkspace}`);
+    const redSpaces = allSpaces.slice(0, halfIndex);
+    const greySpaces = allSpaces.slice(halfIndex);
     
-    if (isRedAndGreyWorkspace) {
-      // Tek workspace durumu: Space'leri eşit olarak ikiye böl
-      const totalSpaces = allSpaces.length;
-      const halfIndex = Math.ceil(totalSpaces / 2);
-      
-      redSpaces = allSpaces.slice(0, halfIndex);
-      greySpaces = allSpaces.slice(halfIndex);
-      
-      console.log(`Single RED and GREY workspace detected. Distributing ${totalSpaces} spaces: ${redSpaces.length} to RED, ${greySpaces.length} to GREY`);
-      console.log(`RED spaces: ${redSpaces.map((s: { name: string }) => s.name)}`);
-      console.log(`GREY spaces: ${greySpaces.map((s: { name: string }) => s.name)}`);
-    } else {
-      // Farklı workspace'ler: Space isimlerine göre filtrele
-      redSpaces = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
-        space.name.toUpperCase().includes('RED')
-      );
-      greySpaces = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
-        space.name.toUpperCase().includes('GREY') || space.name.toUpperCase().includes('GRAY')
-      );
-      
-      console.log(`Multiple workspaces detected. Found ${redSpaces.length} RED spaces and ${greySpaces.length} GREY spaces by name.`);
-    }
+    console.log(`🔄 FORCE DISTRIBUTION:`);
+    console.log(`- RED spaces (${redSpaces.length}):`, redSpaces.map((s: { name: string }) => s.name));
+    console.log(`- GREY spaces (${greySpaces.length}):`, greySpaces.map((s: { name: string }) => s.name));
 
     const workspaces: ClickUpWorkspace[] = [];
 
