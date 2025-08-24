@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         id: teamResponse.data.team?.id,
         name: teamResponse.data.team?.name,
       },
-      spaces: spacesResponse.data.spaces?.map((space: any) => ({
+      spaces: spacesResponse.data.spaces?.map((space: { id: string; name: string; private?: boolean }) => ({
         id: space.id,
         name: space.name,
         private: space.private
@@ -57,11 +57,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       data: debugData
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Raw debug error:', error);
     return res.status(500).json({
       error: 'API request failed',
-      details: error?.response?.data || error.message
+      details: (error as { response?: { data?: unknown }; message?: string })?.response?.data || (error as Error)?.message
     });
   }
 }

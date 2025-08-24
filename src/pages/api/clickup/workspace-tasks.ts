@@ -79,8 +79,8 @@ async function handler(
     console.log(`- Space Names:`, allSpaces.map((s: { name: string }) => s.name));
     
     // Tüm space'leri eşit olarak ikiye böl
-    const totalSpaces = allSpaces.length;
-    const halfIndex = Math.ceil(totalSpaces / 2);
+    const allSpacesCount = allSpaces.length;
+    const halfIndex = Math.ceil(allSpacesCount / 2);
     
     const redSpaces = allSpaces.slice(0, halfIndex);
     const greySpaces = allSpaces.slice(halfIndex);
@@ -268,8 +268,8 @@ async function getWorkspaceTasksData(workspaceName: string, spaces: { id: string
           
           // Debug: Tüm task statusları göster
           if (tasks.length > 0) {
-            const allStatuses = tasks.map((t: any) => t.status?.status).filter(Boolean);
-            console.log(`🔍 All statuses in "${list.name}":`, [...new Set(allStatuses)]);
+            const allStatuses = tasks.map((t: { status?: { status?: string } }) => t.status?.status).filter(Boolean);
+            console.log(`🔍 All statuses in "${list.name}":`, Array.from(new Set(allStatuses)));
           }
           
           // In-progress olan task'ları filtrele
