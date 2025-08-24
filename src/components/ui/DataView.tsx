@@ -28,23 +28,32 @@ export default function DataView({ className = '' }: DataViewProps) {
     setLoadingState({ isLoading: true, error: null });
     
     try {
+      console.log('🔄 Fetching workspace data from API...');
       const response = await fetch('/api/clickup/workspace-tasks');
+      
+      console.log('📡 API Response status:', response.status);
       
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('❌ API Error Response:', errorData);
         throw new Error(errorData.error || 'Veri alınamadı');
       }
 
       const result = await response.json();
+      console.log('✅ API Response data:', {
+        hasData: !!result.data,
+        dataLength: result.data?.length || 0,
+        count: result.count
+      });
+      
       setWorkspaceData(result.data || []);
+      setLoadingState({ isLoading: false, error: null });
     } catch (error) {
-      console.error('Workspace data fetch error:', error);
+      console.error('❌ Workspace data fetch error:', error);
       setLoadingState({
         isLoading: false,
         error: error instanceof Error ? error.message : 'Bilinmeyen bir hata oluştu'
       });
-    } finally {
-      setLoadingState(prev => ({ ...prev, isLoading: false }));
     }
   };
 
@@ -201,7 +210,27 @@ export default function DataView({ className = '' }: DataViewProps) {
   if (!workspaceData || workspaceData.length === 0) {
     return (
       <div className={`bg-gray-50 border border-gray-200 rounded-lg p-6 text-center ${className}`}>
-        <p className="text-gray-600">Henüz veri bulunamadı.</p>
+        <div className="text-gray-400 mb-4">
+          <svg className="h-12 w-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Veri Bulunamadı</h3>
+        <p className="text-gray-600 mb-4">
+          Henüz in-progress task bulunamadı. Bu durumun olası nedenleri:
+        </p>
+        <ul className="text-sm text-gray-500 text-left max-w-md mx-auto space-y-1">
+          <li>• ClickUp API bağlantı sorunu</li>
+          <li>• Hiç in-progress task bulunmaması</li>
+          <li>• Workspace/Space erişim izni sorunu</li>
+          <li>• API token veya team ID hatalı</li>
+        </ul>
+        <button
+          onClick={fetchWorkspaceData}
+          className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors"
+        >
+          Yeniden Dene
+        </button>
       </div>
     );
   }

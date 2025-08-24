@@ -15,19 +15,24 @@ async function handler(
 
   // Environment variable kontrolü
   if (!process.env.CLICKUP_API_TOKEN) {
+    console.error('CLICKUP_API_TOKEN is missing from environment variables');
     return res.status(500).json({ 
-      error: 'ClickUp API yapılandırması eksik. Lütfen sistem yöneticisi ile iletişime geçin.'
+      error: 'ClickUp API yapılandırması eksik. Lütfen sistem yöneticisi ile iletişime geçin.',
+      debug: process.env.NODE_ENV === 'development' ? 'CLICKUP_API_TOKEN environment variable is missing' : undefined
     });
   }
 
   if (!process.env.CLICKUP_TEAM_ID) {
+    console.error('CLICKUP_TEAM_ID is missing from environment variables');
     return res.status(500).json({
-      error: 'ClickUp Team ID yapılandırması eksik. CLICKUP_TEAM_ID environment variable\'ını ayarlayın.'
+      error: 'ClickUp Team ID yapılandırması eksik. CLICKUP_TEAM_ID environment variable\'ını ayarlayın.',
+      debug: process.env.NODE_ENV === 'development' ? 'CLICKUP_TEAM_ID environment variable is missing' : undefined
     });
   }
 
   try {
     const teamId = process.env.CLICKUP_TEAM_ID;
+    console.log(`Starting API request for team: ${teamId}`);
     
     // Önce team'in workspace'lerini al
     const workspacesResponse = await axios.get(
@@ -40,6 +45,8 @@ async function handler(
         timeout: 10000
       }
     );
+    
+    console.log('Team data fetched successfully');
 
     const team = workspacesResponse.data.team;
     if (!team) {
@@ -109,9 +116,25 @@ async function handler(
       workspaceData.push(greyWorkspaceData);
     }
 
+    // Summary for debugging
+    const totalSpaces = workspaceData.reduce((sum, workspace) => sum + workspace.spaces.length, 0);
+    const totalLists = workspaceData.reduce((sum, workspace) => 
+      sum + workspace.spaces.reduce((spaceSum, space) => spaceSum + space.lists.length, 0), 0);
+    const totalTasks = workspaceData.reduce((sum, workspace) => 
+      sum + workspace.spaces.reduce((spaceSum, space) => 
+        spaceSum + space.lists.reduce((listSum, list) => listSum + list.inProgressTasks.length, 0), 0), 0);
+    
+    console.log(`API Summary: ${workspaceData.length} workspaces, ${totalSpaces} spaces, ${totalLists} lists, ${totalTasks} in-progress tasks`);
+    
     res.status(200).json({ 
       data: workspaceData,
-      count: workspaceData.length
+      count: workspaceData.length,
+      debug: process.env.NODE_ENV === 'development' ? {
+        totalSpaces,
+        totalLists,
+        totalTasks,
+        workspaceNames: workspaceData.map(w => w.workspaceName)
+      } : undefined
     });
 
   } catch (error: unknown) {
@@ -254,15 +277,28 @@ async function getWorkspaceTasksData(workspaceName: string, spaces: { id: string
           );
 
           const tasks = tasksResponse.data.tasks || [];
+          console.log(`📋 Found ${tasks.length} total tasks in list "${list.name}"`);
+          
+          // Debug: Tüm task statusları göster
+          if (tasks.length > 0) {
+            const allStatuses = tasks.map((t: any) => t.status?.status).filter(Boolean);
+            console.log(`🔍 All statuses in "${list.name}":`, [...new Set(allStatuses)]);
+          }
           
           // In-progress olan task'ları filtrele
           const inProgressTasks: ClickUpTaskWithStatus[] = tasks
-            .filter((task: { status?: { status?: string } }) => 
-              task.status?.status.toLowerCase().includes('progress') ||
-              task.status?.status.toLowerCase().includes('doing') ||
-              task.status?.status.toLowerCase().includes('development') ||
-              task.status?.status.toLowerCase().includes('active')
-            )
+            .filter((task: { status?: { status?: string } }) => {
+              if (!task.status?.status) return false;
+              
+              const status = task.status.status.toLowerCase();
+              const inProgressKeywords = [
+                'progress', 'doing', 'development', 'active', 
+                'in progress', 'in-progress', 'working', 'started',
+                'coding', 'implementing', 'developing'
+              ];
+              
+              return inProgressKeywords.some(keyword => status.includes(keyword));
+            })
             .map((task: {
               id: string;
               name: string;
