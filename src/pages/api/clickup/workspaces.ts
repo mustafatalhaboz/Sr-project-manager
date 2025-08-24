@@ -29,6 +29,23 @@ async function handler(
   try {
     const teamId = process.env.CLICKUP_TEAM_ID;
     
+    // Önce team'in workspace'lerini al
+    const workspacesResponse = await axios.get(
+      `${CLICKUP_API_URL}/team/${teamId}`,
+      {
+        headers: {
+          'Authorization': process.env.CLICKUP_API_TOKEN,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      }
+    );
+
+    const team = workspacesResponse.data.team;
+    if (!team) {
+      throw new Error('Team bilgisi alınamadı');
+    }
+
     // Team'in tüm space'lerini al
     const spacesResponse = await axios.get(
       `${CLICKUP_API_URL}/team/${teamId}/space?archived=false`,
@@ -43,14 +60,28 @@ async function handler(
 
     const allSpaces = spacesResponse.data.spaces || [];
     
-    // RED ve GREY workspace'lerini filtrele
-    const redSpaces = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
-      space.name.toUpperCase().includes('RED')
-    );
+    // Workspace isimleri "RED and GREY" ise tüm space'leri al, aksi takdirde space isimlerine göre filtrele
+    let redSpaces, greySpaces;
     
-    const greySpaces = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
-      space.name.toUpperCase().includes('GREY') || space.name.toUpperCase().includes('GRAY')
-    );
+    if (team.name && team.name.toUpperCase().includes('RED AND GREY')) {
+      // Tek workspace, space'leri RED ve GREY'e göre filtrele
+      redSpaces = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
+        space.name.toUpperCase().includes('RED')
+      );
+      
+      greySpaces = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
+        space.name.toUpperCase().includes('GREY') || space.name.toUpperCase().includes('GRAY')
+      );
+    } else {
+      // Workspace isimlerine göre filtrele (eski mantık)
+      redSpaces = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
+        space.name.toUpperCase().includes('RED')
+      );
+      
+      greySpaces = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
+        space.name.toUpperCase().includes('GREY') || space.name.toUpperCase().includes('GRAY')
+      );
+    }
 
     const workspaces: ClickUpWorkspace[] = [];
 
