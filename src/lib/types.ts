@@ -64,3 +64,73 @@ export interface ProcessingState {
   message: string;
   progress: number;
 }
+
+// ClickUp Workspace ve Space interface'leri
+export interface ClickUpSpace {
+  id: string;
+  name: string;
+  private: boolean;
+  color?: string;
+  avatar?: string;
+}
+
+export interface ClickUpWorkspace {
+  id: string;
+  name: string;
+  spaces: ClickUpSpace[];
+}
+
+// Status bilgisini içeren task interface'i
+export interface ClickUpTaskWithStatus {
+  id: string;
+  name: string;
+  description?: string;
+  status: {
+    id: string;
+    status: string;
+    color: string;
+    type: string;
+    orderindex: number;
+  };
+  priority: {
+    id: string;
+    priority: string;
+    color: string;
+    orderindex: number;
+  } | null;
+  tags: string[];
+  list: {
+    id: string;
+    name: string;
+  };
+  folder?: {
+    id: string;
+    name: string;
+  };
+  space: {
+    id: string;
+    name: string;
+  };
+  assignees: Array<{
+    id: string;
+    username: string;
+    email: string;
+  }>;
+  due_date?: string;
+  start_date?: string;
+  time_estimate?: number;
+}
+
+// Workspace verilerini gruplandıran interface
+export interface WorkspaceData {
+  workspaceName: string;
+  spaces: Array<{
+    spaceName: string;
+    lists: Array<{
+      listId: string;
+      listName: string;
+      folderName?: string;
+      inProgressTasks: ClickUpTaskWithStatus[];
+    }>;
+  }>;
+}
