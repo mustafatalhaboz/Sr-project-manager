@@ -60,27 +60,36 @@ async function handler(
 
     const allSpaces = spacesResponse.data.spaces || [];
     
-    // Workspace isimleri "RED and GREY" ise tüm space'leri al, aksi takdirde space isimlerine göre filtrele
+    // Debug: Team ismi ve space isimlerini log'la
+    console.log('Team name:', team.name);
+    console.log('Available spaces:', allSpaces.map((s: { name: string }) => s.name));
+    
+    // Dinamik space filtreleme: Her iki durumu da destekle
     let redSpaces, greySpaces;
     
-    if (team.name && team.name.toUpperCase().includes('RED AND GREY')) {
-      // Tek workspace, space'leri RED ve GREY'e göre filtrele
-      redSpaces = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
-        space.name.toUpperCase().includes('RED')
-      );
+    // Önce space isimleri RED/GREY içeriyorsa ona göre filtrele
+    const redSpacesByName = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
+      space.name.toUpperCase().includes('RED')
+    );
+    const greySpacesByName = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
+      space.name.toUpperCase().includes('GREY') || space.name.toUpperCase().includes('GRAY')
+    );
+    
+    // Eğer space isimleri RED/GREY içermiyorsa, tüm space'leri eşit dağıt
+    if (redSpacesByName.length === 0 && greySpacesByName.length === 0) {
+      const totalSpaces = allSpaces.length;
+      const halfIndex = Math.ceil(totalSpaces / 2);
       
-      greySpaces = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
-        space.name.toUpperCase().includes('GREY') || space.name.toUpperCase().includes('GRAY')
-      );
+      redSpaces = allSpaces.slice(0, halfIndex);
+      greySpaces = allSpaces.slice(halfIndex);
+      
+      console.log(`No RED/GREY named spaces found. Distributing ${totalSpaces} spaces equally.`);
     } else {
-      // Workspace isimlerine göre filtrele (eski mantık)
-      redSpaces = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
-        space.name.toUpperCase().includes('RED')
-      );
+      // RED/GREY isimli space'ler varsa onları kullan
+      redSpaces = redSpacesByName;
+      greySpaces = greySpacesByName;
       
-      greySpaces = allSpaces.filter((space: { name: string; id: string; private?: boolean; color?: string; avatar?: string }) => 
-        space.name.toUpperCase().includes('GREY') || space.name.toUpperCase().includes('GRAY')
-      );
+      console.log(`Found ${redSpaces.length} RED spaces and ${greySpaces.length} GREY spaces by name.`);
     }
 
     const workspaces: ClickUpWorkspace[] = [];
